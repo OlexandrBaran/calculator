@@ -1,10 +1,10 @@
 import React from 'react';
 import Buttons from './Buttons';
 import History from './History';
-import FolkMe from './Folkme';
 import DisplayToolbar from './DisplayToolbar';
 import * as Calculator from '../calculator-core';
 import './App.css';
+
 
 export default class App extends React.Component {
   constructor(props) {
@@ -23,14 +23,15 @@ export default class App extends React.Component {
     this.onClear = this.onClear.bind(this);
     this.onEqual = this.onEqual.bind(this);
     this.onDecimal = this.onDecimal.bind(this);
-    this.onParenthesis = this.onParenthesis.bind(this);
     this.onBackspace = this.onBackspace.bind(this);
     this.onHistory = this.onHistory.bind(this);
     this.onHistoryItemClicked = this.onHistoryItemClicked.bind(this);
     this.onClearHistory = this.onClearHistory.bind(this);
+    
   }
 
   onDigit({ target }) {
+    
     const digit = target.innerText;
     const input = this.state.input;
 
@@ -55,6 +56,8 @@ export default class App extends React.Component {
     }
   }
 
+
+  
   onDecimal({ target }) {
     const decimal = target.innerText;
     const input = this.state.input;
@@ -94,47 +97,7 @@ export default class App extends React.Component {
     }
   }
 
-  onParenthesis({ target }) {
-    const parenthesis = target.innerText;
-    const input = this.state.input;
 
-    if (parenthesis === '(') {
-      if ((Calculator.isNumber(input) && input !== '0') ||
-        (Calculator.isNumber(input) && input === '0' && this.state.formula.length > 0) ||
-        input === ')') {
-        this.setState({
-          input: parenthesis,
-          formula: this.state.formula.concat([input, '*']),
-          afterCalculation: false
-        });
-      } else if (Calculator.isOperator(input) || input === '(') {
-        this.setState({
-          input: parenthesis,
-          formula: this.state.formula.concat(input),
-          afterCalculation: false
-        });
-      } else if (Calculator.isNumber(input) && input === '0' && this.state.formula.length === 0) {
-        this.setState({
-          input: parenthesis,
-          afterCalculation: false
-        });
-      }
-    } else {
-      const arrayOpenParenthesis = this.state.formula.join("").match(/\(/g);
-      const numOpenParenthesis = arrayOpenParenthesis ? arrayOpenParenthesis.length : 0;
-
-      const arrayCloseParenthesis = this.state.formula.join("").match(/\)/g);
-      const numCloseParenthesis = arrayCloseParenthesis ? arrayCloseParenthesis.length : 0;
-
-      if ((Calculator.isNumber(input) || input === ')') && numOpenParenthesis > 0 && numOpenParenthesis > numCloseParenthesis) {
-        this.setState({
-          input: parenthesis,
-          formula: this.state.formula.concat(input),
-          afterCalculation: false
-        });
-      }
-    }
-  }
 
   onClear() {
     this.setState({
@@ -227,10 +190,6 @@ export default class App extends React.Component {
           <DisplayToolbar
             formula={this.state.formula}
             input={this.state.input}
-            onBackspace={this.onBackspace}
-            githubURL={this.props.githubURL}
-            onHistory={this.onHistory}
-            isShowHistory={this.state.isShowHistory}
           />
 
           <Buttons
@@ -239,7 +198,9 @@ export default class App extends React.Component {
             onDecimal={this.onDecimal}
             onDigit={this.onDigit}
             onOperator={this.onOperator}
-            onParenthesis={this.onParenthesis}
+            onBackspace={this.onBackspace}
+            onHistory={this.onHistory}
+
           />
 
           <History
@@ -251,14 +212,7 @@ export default class App extends React.Component {
           />
         </div>
 
-        <FolkMe
-          targetURL={this.props.githubURL}
-          color="#fff"
-          backgroundColor="#3da4ab"
-          position="right"
-          size="120px"
-          ariaLabel="View source on Github"
-        />
+        
       </div>
     )
   }
